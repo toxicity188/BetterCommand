@@ -49,8 +49,6 @@ public final class BetterCommand {
         this.logger = logger;
         this.registry = new MessageRegistry(serializer);
 
-        reload();
-
         addSerializer(String.class, ClassSerializers.STRING);
         addSerializer(Integer.class, ClassSerializers.INTEGER);
         addSerializer(Double.class, ClassSerializers.DOUBLE);
@@ -60,6 +58,8 @@ public final class BetterCommand {
         addSerializer(Byte.class, ClassSerializers.BYTE);
         addSerializer(Character.class, ClassSerializers.CHARACTER);
         addSerializer(Boolean.class, ClassSerializers.BOOLEAN);
+
+        reload();
     }
 
     public <T> @NotNull BetterCommand addSerializer(@NotNull Class<T> clazz, ClassSerializer<? extends T> serializer) {
@@ -163,6 +163,20 @@ public final class BetterCommand {
         } catch (IOException ignored) {
             //StringWriter has no effect.
         }
+    }
+
+    private @NotNull Component component(@NotNull BetterCommandSource source, @NotNull CommandMessage message) {
+        return registry.find(source, message);
+    }
+
+    public @NotNull MessageSender registerKey(@NotNull CommandMessage message) {
+        return (l, s) -> s.audience().sendMessage(Component.text()
+                .append(component(s, switch (l) {
+                    case INFO -> prefix.info();
+                    case WARN -> prefix.warn();
+                    case ERROR -> prefix.error();
+                }))
+                .append(component(s, message)));
     }
 
     private static JsonObject parseFile(@NotNull File file) {

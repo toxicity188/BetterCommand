@@ -52,7 +52,7 @@ public final class CommandModule<S, W extends BetterCommandSource> implements Co
     private String[] aliases;
     private String permission;
     private Predicate<? super W> predicate = w -> true;
-    private Function<? super W, CommandMessage> description;
+    private MessageFunction<W> description;
     private SenderType[] type = SenderType.values();
 
     private final List<CommandArgument<S, W>> arguments = new ArrayList<>();
@@ -66,25 +66,25 @@ public final class CommandModule<S, W extends BetterCommandSource> implements Co
         this.aliases = aliases;
         return this;
     }
-    public String[] aliases() {
+    public @NotNull String[] aliases() {
         return aliases != null ? aliases : new String[0];
     }
 
     public @NotNull CommandModule<S, W> description(@NotNull String key, @NotNull Component component) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(component, "component");
-        return description(w -> new CommandMessage(key, component));
+        return description(new CommandMessage(key, component));
     }
     public @NotNull CommandModule<S, W> description(@NotNull CommandMessage description) {
         Objects.requireNonNull(description, "description");
-        return description(w -> description);
+        return description(new MessageFunction<>(description));
     }
-    public @NotNull CommandModule<S, W> description(@Nullable Function<? super W, CommandMessage> description) {
+    public @NotNull CommandModule<S, W> description(@Nullable MessageFunction<W> description) {
         this.description = description;
         return this;
     }
-    public @NotNull Function<? super W, CommandMessage> description() {
-        return description != null ? description : w -> UNKNOWN_DESCRIPTION;
+    public @NotNull MessageFunction<W> description() {
+        return description != null ? description : new MessageFunction<>(UNKNOWN_DESCRIPTION);
     }
 
     public @NotNull CommandModule<S, W> permission(@Nullable String permission) {
@@ -207,7 +207,7 @@ public final class CommandModule<S, W extends BetterCommandSource> implements Co
             }
             audience.sendMessage(builder
                     .append(Component.text(" - ").color(NamedTextColor.GRAY))
-                    .append(component(source, args.description().apply(source)))
+                    .append(component(source, args.description().find(source)))
                     .clickEvent(ClickEvent.suggestCommand(commandName)));
         }
         audience.sendMessage(info);

@@ -19,7 +19,7 @@ final class MessageRegistry {
     private final Map<Locale, Map<String, Component>> localeMap = new HashMap<>();
     private final ComponentSerializer<Component, Component, String> serializer;
 
-    public void register(@NotNull Locale locale, @NotNull JsonObject object) {
+    void register(@NotNull Locale locale, @NotNull JsonObject object) {
         Objects.requireNonNull(locale, "locale");
         Objects.requireNonNull(object, "object");
         localeMap.computeIfAbsent(locale, l -> {
@@ -34,15 +34,15 @@ final class MessageRegistry {
     }
 
     @ApiStatus.Internal
-    public void clear() {
+    void clear() {
         localeMap.clear();
     }
 
-    public boolean contains(@NotNull Locale locale) {
+    boolean contains(@NotNull Locale locale) {
         return localeMap.containsKey(locale);
     }
 
-    public @NotNull Component find(@NotNull BetterCommandSource source, @NotNull CommandMessage message) {
+    @NotNull Component find(@NotNull BetterCommandSource source, @NotNull CommandMessage message) {
         var map = localeMap.get(source.locale());
         if (map == null) return message.defaultMessage();
         var component = map.get(message.key());

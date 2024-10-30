@@ -240,8 +240,8 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
     }
 
     @Override
-    public @NotNull Function<? super W, CommandMessage> description() {
-        return w -> description;
+    public @NotNull MessageFunction<W> description() {
+        return new MessageFunction<>(description);
     }
 
     @Override

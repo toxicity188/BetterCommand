@@ -63,6 +63,7 @@ public class CommandTest extends JavaPlugin {
                         .nullMessage(new CommandMessage("test.null.location", Component.text("Location not found in [value]!")))
                         .build()
         );
+        var teleportMessage = library.registerKey(new CommandMessage("test.teleport.message", Component.text("Go!")));
         //Create command
         var command = library.<CommandSourceStack, BetterCommandSource>module("mycommand", p -> {
             var get = p.getBukkitSender();
@@ -85,7 +86,7 @@ public class CommandTest extends JavaPlugin {
             @Sender(type = SenderType.PLAYER)
             public void teleport(@Source BetterCommandSource me, Location location) {
                 ((Player) me.audience()).teleport(location);
-                me.audience().sendMessage(Component.text("Go!"));
+                teleportMessage.send(me);
             }
 
             @Command
