@@ -115,7 +115,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
             var finalClazz = ref != null ? ref : clazz;
             var serializer = root.find(finalClazz);
             if (serializer == null) throw new NotSerializerRegisteredException("A serializer for " + finalClazz.getSimpleName() + " not found.");
-            var key = "args" + index++;
+            var key = parameter.getName();
             commandTree.add(RequiredArgumentBuilder.<S, String>argument(key, vararg ? StringArgumentType.greedyString() : StringArgumentType.string())
                     .suggests((context, builder1) -> {
                         for (String suggest : serializer.suggests(mapper.apply(context.getSource()))) {

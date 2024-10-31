@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -27,7 +26,7 @@ public final class CommandModule<W extends BetterCommandSource> implements Comma
 
     public static final CommandMessage REQUIRED_ARGUMENT = new CommandMessage("internal.required_argument", Component.text()
             .content("    ")
-            .append(Component.text().content("<value>").color(NamedTextColor.RED))
+            .append(Component.text().content("(value)").color(NamedTextColor.RED))
             .append(Component.text().content(" - ").color(NamedTextColor.GRAY))
             .append(Component.text("Required").color(NamedTextColor.WHITE))
             .build());
