@@ -10,15 +10,20 @@ import kr.toxicity.command.exception.NotDirectoryException;
 import kr.toxicity.command.exception.NotJsonObjectException;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public final class BetterCommand {
+
+    private static final Pattern VALUE_PATTERN = Pattern.compile("\\[(?<value>[a-zA-Z]+)]");
+
     private final File dataFolder;
     private final Map<Class<?>, ClassSerializer<?>> serializerMap = new LinkedHashMap<>();
     private final Gson gson = new GsonBuilder()
@@ -169,13 +174,20 @@ public final class BetterCommand {
     }
 
     public @NotNull MessageSender registerKey(@NotNull CommandMessage message) {
-        return (l, s) -> s.audience().sendMessage(Component.text()
+        return (l, s, m) -> s.audience().sendMessage(Component.text()
                 .append(component(s, switch (l) {
                     case INFO -> prefix.info();
                     case WARN -> prefix.warn();
                     case ERROR -> prefix.error();
                 }))
-                .append(component(s, message)));
+                .append(component(s, message).replaceText(TextReplacementConfig.builder()
+                        .match(VALUE_PATTERN)
+                        .replacement((r, b) -> {
+                            var group = r.group(1);
+                            var get = m.get(group);
+                            return get != null ? get : Component.text(group);
+                        })
+                        .build())));
     }
 
     private static JsonObject parseFile(@NotNull File file) {
