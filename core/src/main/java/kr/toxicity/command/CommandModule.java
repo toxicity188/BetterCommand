@@ -143,7 +143,6 @@ public final class CommandModule<W extends BetterCommandSource> implements Comma
 
     public @NotNull CommandModule<W> executes(@NotNull CommandListener executor) {
         for (Method method : executor.getClass().getMethods()) {
-            if (method.getModifiers() != Modifier.PUBLIC) continue;
             if (method.getAnnotation(Command.class) == null) continue;
             arguments.add(new MethodExecutor<>(
                     root,
