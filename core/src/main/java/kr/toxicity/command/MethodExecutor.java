@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgument<S, W> {
+class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W> {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_REFERENCE = Map.ofEntries(
             Map.entry(Integer.TYPE, Integer.class),
@@ -38,12 +38,13 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
     private final String name;
     private final CommandMessage description;
     private final String permission;
+    private final CommandListener obj;
+    private final Method method;
 
-    private final List<LiteralArgumentBuilder<S>> nodes;
     private final List<UsageGetter<W>> usage = new ArrayList<>();
     private final String[] aliases;
 
-    MethodExecutor(@NotNull BetterCommand root, @NotNull Function<S, W> mapper, @NotNull CommandListener obj, @NotNull Method method) {
+    MethodExecutor(@NotNull BetterCommand root, @NotNull CommandListener obj, @NotNull Method method) {
         try {
             method.setAccessible(true);
         } catch (Exception e) {
@@ -60,6 +61,11 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
 
         var aliasesAnnotation = method.getAnnotation(Aliases.class);
         aliases = aliasesAnnotation != null ? aliasesAnnotation.aliases() : new String[0];
+        this.method = method;
+        this.obj = obj;
+    }
+
+    public @NotNull <S> List<LiteralArgumentBuilder<S>> build(@NotNull Function<S, W> mapper) {
 
         var typeAnnotation = method.getAnnotation(Sender.class);
         var type = EnumSet.copyOf(Arrays.asList(typeAnnotation != null ? typeAnnotation.type() : SenderType.values()));
@@ -164,7 +170,7 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
             }
             return 0;
         };
-        nodes = new ArrayList<>(lists.size());
+        List<LiteralArgumentBuilder<S>> nodes = new ArrayList<>(lists.size());
         for (String s : lists) {
             var node = LiteralArgumentBuilder.<S>literal(s)
                     .requires(source -> {
@@ -213,6 +219,7 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
                 nodes.add(node);
             }
         }
+        return nodes;
     }
 
     private interface ContextParser<T> {
@@ -242,11 +249,6 @@ class MethodExecutor<S, W extends BetterCommandSource> implements CommandArgumen
     @Override
     public @NotNull MessageFunction<W> description() {
         return new MessageFunction<>(description);
-    }
-
-    @Override
-    public @NotNull List<LiteralArgumentBuilder<S>> build() {
-        return nodes;
     }
 
     @Override

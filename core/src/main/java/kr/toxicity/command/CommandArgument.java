@@ -6,11 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
-public interface CommandArgument<S, W extends BetterCommandSource> {
+public interface CommandArgument<W extends BetterCommandSource> {
     @NotNull String name();
     @NotNull MessageFunction<W> description();
-    @NotNull List<LiteralArgumentBuilder<S>> build();
+    @NotNull <S> List<LiteralArgumentBuilder<S>> build(@NotNull Function<S, W> mapper);
     @NotNull String[] aliases();
     @Nullable Component usage(@NotNull W w);
     @Nullable String permission();

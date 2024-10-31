@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public final class BetterCommand {
@@ -203,7 +202,7 @@ public final class BetterCommand {
         return serializerMap.get(clazz);
     }
 
-    public @NotNull <S, W extends BetterCommandSource> CommandModule<S, W> module(@NotNull String name, @NotNull Function<S, W> mapper) {
-        return new CommandModule<>(this, name, mapper);
+    public @NotNull <W extends BetterCommandSource> CommandModule<W> module(@NotNull String name) {
+        return new CommandModule<>(this, name);
     }
 }
