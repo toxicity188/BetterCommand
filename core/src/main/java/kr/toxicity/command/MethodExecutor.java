@@ -41,8 +41,8 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
     private final CommandListener obj;
     private final Method method;
 
-    private final List<UsageGetter<W>> usage = new ArrayList<>();
     private final String[] aliases;
+    private List<UsageGetter<W>> usage = Collections.emptyList();
 
     MethodExecutor(@NotNull BetterCommand root, @NotNull CommandListener obj, @NotNull Method method) {
         try {
@@ -66,7 +66,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
     }
 
     public @NotNull <S> List<LiteralArgumentBuilder<S>> build(@NotNull Function<S, W> mapper) {
-
+        usage = new ArrayList<>();
         var typeAnnotation = method.getAnnotation(Sender.class);
         var type = EnumSet.copyOf(Arrays.asList(typeAnnotation != null ? typeAnnotation.type() : SenderType.values()));
 
