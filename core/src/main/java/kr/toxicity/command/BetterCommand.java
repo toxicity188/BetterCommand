@@ -62,8 +62,6 @@ public final class BetterCommand {
         addSerializer(Byte.class, ClassSerializers.BYTE);
         addSerializer(Character.class, ClassSerializers.CHARACTER);
         addSerializer(Boolean.class, ClassSerializers.BOOLEAN);
-
-        reload();
     }
 
     public <T> @NotNull BetterCommand addSerializer(@NotNull Class<T> clazz, ClassSerializer<? extends T> serializer) {
