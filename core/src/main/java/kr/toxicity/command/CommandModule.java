@@ -156,6 +156,7 @@ public final class CommandModule<W extends BetterCommandSource> implements Comma
         return (int) Math.ceil((double) arguments.size() / 6);
     }
     private void showHelp(int page, W source) {
+        if (source == null) return;
         var info = component(source, root.prefix().info());
 
         var audience = source.audience();
@@ -227,26 +228,16 @@ public final class CommandModule<W extends BetterCommandSource> implements Comma
         return lists.stream().map(s -> {
             var builder = LiteralArgumentBuilder.<S>literal(s)
                     .requires(source -> {
-                        W wrapper;
-                        try {
-                            wrapper = mapper.apply(source);
-                            if (wrapper == null) return false;
-                        } catch (Exception e) {
-                            return false;
-                        }
+                        W wrapper = mapper.apply(source);
+                        if (wrapper == null) return true;
                         if (!predicate.test(wrapper)) return false;
                         if (permission != null && !wrapper.hasPermission(permission)) return false;
                         return set.contains(wrapper.type());
                     });
             builder.then(LiteralArgumentBuilder.<S>literal("help")
                             .requires(source -> {
-                                W wrapper;
-                                try {
-                                    wrapper = mapper.apply(source);
-                                    if (wrapper == null) return false;
-                                } catch (Exception e) {
-                                    return false;
-                                }
+                                W wrapper = mapper.apply(source);
+                                if (wrapper == null) return true;
                                 if (!predicate.test(wrapper)) return false;
                                 if (permission != null && !wrapper.hasPermission(permission + ".help")) return false;
                                 return set.contains(wrapper.type());

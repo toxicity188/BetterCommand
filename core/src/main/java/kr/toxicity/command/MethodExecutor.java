@@ -74,7 +74,6 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         lists.add(name);
         lists.addAll(Arrays.asList(aliases));
 
-        var index = 0;
         List<RequiredArgumentBuilder<S, ?>> commandTree = new ArrayList<>();
         var valueList = new ArrayList<ContextParser<S>>();
         var lastParameter = method.getParameters().length - 1;
@@ -87,7 +86,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
             var canBeNull = !option && parameter.getAnnotation(CanBeNull.class) != null;
             if ((option || vararg) && parameterIndex < lastParameter) throw new NotLastParameterException("@Option or @Vararg can work only last parameter.");
             parameterIndex++;
-            if (BetterCommandSource.class.isAssignableFrom(clazz) && parameter.getAnnotation(Source.class) != null) {
+            if (parameter.getType().isAssignableFrom(clazz) && parameter.getAnnotation(Source.class) != null) {
                 valueList.add(new ContextParser<>() {
                     @Override
                     public boolean canBeNull() {
@@ -174,13 +173,8 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         for (String s : lists) {
             var node = LiteralArgumentBuilder.<S>literal(s)
                     .requires(source -> {
-                        W wrapper;
-                        try {
-                            wrapper = mapper.apply(source);
-                            if (wrapper == null) return false;
-                        } catch (Exception e) {
-                            return false;
-                        }
+                        W wrapper = mapper.apply(source);
+                        if (wrapper == null) return true;
                         if (permission != null && !wrapper.hasPermission(permission)) return false;
                         return type.contains(wrapper.type());
                     });
