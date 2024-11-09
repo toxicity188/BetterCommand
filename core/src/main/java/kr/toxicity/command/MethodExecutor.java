@@ -252,8 +252,16 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         var index = 0;
         var last = usage.size() - 1;
         for (UsageGetter<W> commandMessage : usage) {
+            var suggests = commandMessage.suggests.apply(w);
+            var size = suggests.size();
+            String args;
+            if (size <= 6) {
+                args = String.join("\n", suggests);
+            } else {
+                args = String.join("\n", suggests.subList(0, 6)) + "\n+" + (size - 6);
+            }
             builder.append(root.registry.find(w, commandMessage.message)
-                    .hoverEvent(HoverEvent.showText(Component.text(String.join(", ", commandMessage.suggests.apply(w))))));
+                    .hoverEvent(HoverEvent.showText(Component.text(args))));
             if (index++ < last) builder.append(Component.space());
         }
         return builder.build();

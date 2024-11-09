@@ -126,6 +126,12 @@ public class CommandTest extends JavaPlugin {
                         ((Player) me.audience()).damage(9999);
                         me.audience().sendMessage(Component.text("Good bye!"));
                     }
+                    @Command
+                    @Description(key = "test.child.test", defaultValue = "Test command.")
+                    @Permission("test.child.test")
+                    public void test(@Source BetterCommandSource me, String sender, @Vararg @Option String argus) {
+                        me.audience().sendMessage(Component.text(sender + ": " + argus));
+                    }
                 }
         ));
         for (LiteralArgumentBuilder<CommandSourceStack> builder : command.<CommandSourceStack>build(p -> {

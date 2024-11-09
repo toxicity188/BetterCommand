@@ -136,8 +136,15 @@ public final class CommandModule<W extends BetterCommandSource> implements Comma
 
     @Override
     public @NotNull Component usage(@NotNull W w) {
+        String args;
+        var size = arguments.size();
+        if (size <= 6) {
+            args = arguments.stream().map(CommandArgument::name).collect(Collectors.joining("\n"));
+        } else {
+            args = arguments.subList(0, 6).stream().map(CommandArgument::name).collect(Collectors.joining("\n")) + "\n+" + (size - 6);
+        }
         return component(w, CHILDREN)
-                .hoverEvent(HoverEvent.showText(Component.text(arguments.stream().map(CommandArgument::name).collect(Collectors.joining(", ")))));
+                .hoverEvent(HoverEvent.showText(Component.text(args)));
     }
 
     public @NotNull CommandModule<W> executes(@NotNull CommandListener executor) {
