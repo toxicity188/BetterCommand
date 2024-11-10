@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
@@ -29,6 +30,8 @@ public final class BetterCommand {
     private final Gson gson = new GsonBuilder()
             .disableHtmlEscaping()
             .create();
+
+    private Consumer<Throwable> exceptionHandler = e -> {};
 
     private final CommandLogger logger;
     private CommandPrefix prefix = CommandPrefix.DEFAULT;
@@ -75,6 +78,17 @@ public final class BetterCommand {
         Objects.requireNonNull(prefix, "prefix");
         this.prefix = prefix;
         return this;
+    }
+
+    public @NotNull BetterCommand exceptionHandler(@NotNull Consumer<Throwable> handler) {
+        Objects.requireNonNull(handler, "handler");
+        var old = exceptionHandler;
+        exceptionHandler = old.andThen(handler);
+        return this;
+    }
+
+    void handleException(@NotNull Throwable throwable) {
+        exceptionHandler.accept(throwable);
     }
 
     public @NotNull CommandPrefix prefix() {
@@ -188,12 +202,13 @@ public final class BetterCommand {
                         .build())));
     }
 
-    private static JsonObject parseFile(@NotNull File file) {
+    private JsonObject parseFile(@NotNull File file) {
         try (var reader = new FileReader(file); var buffered = new BufferedReader(reader); var json = new JsonReader(buffered)) {
             var result = JsonParser.parseReader(json);
             if (result.isJsonObject()) return result.getAsJsonObject();
             else throw new NotJsonObjectException("This file is not a json object: " + file.getPath());
         } catch (IOException exception) {
+            handleException(exception);
             throw new RuntimeException(exception);
         }
     }

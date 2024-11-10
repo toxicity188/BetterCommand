@@ -76,6 +76,3 @@ var command = library.<CommandSourceStack, BetterCommandSource>module("mycommand
 ## Build
 Required JDK 17.  
 ./gradlew build
-
-## Caution
-This project is still under developing!

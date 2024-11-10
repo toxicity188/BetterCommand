@@ -48,6 +48,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         try {
             method.setAccessible(true);
         } catch (Exception e) {
+            root.handleException(e);
             throw new RuntimeException(e);
         }
         this.root = root;
@@ -165,6 +166,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
                 }
                 method.invoke(obj, array);
             } catch (Exception e) {
+                root.handleException(e);
                 throw new RuntimeException(e);
             }
             return 0;
@@ -196,6 +198,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
                         array[i] = null;
                         method.invoke(obj, array);
                     } catch (Exception e) {
+                        root.handleException(e);
                         throw new RuntimeException(e);
                     }
                     return 0;
