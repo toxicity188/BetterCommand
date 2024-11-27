@@ -186,20 +186,24 @@ public final class BetterCommand {
     }
 
     public @NotNull MessageSender registerKey(@NotNull CommandMessage message) {
-        return (l, s, m) -> s.audience().sendMessage(Component.text()
-                .append(component(s, switch (l) {
-                    case INFO -> prefix.info();
-                    case WARN -> prefix.warn();
-                    case ERROR -> prefix.error();
-                }))
-                .append(component(s, message).replaceText(TextReplacementConfig.builder()
-                        .match(VALUE_PATTERN)
-                        .replacement((r, b) -> {
-                            var group = r.group(1);
-                            var get = m.get(group);
-                            return get != null ? get : Component.text(group);
-                        })
-                        .build())));
+        return (l, s, m) -> {
+            var msg = component(s, message);
+            if (serializer.serialize(msg).isEmpty()) return;
+            s.audience().sendMessage(Component.text()
+                    .append(component(s, switch (l) {
+                        case INFO -> prefix.info();
+                        case WARN -> prefix.warn();
+                        case ERROR -> prefix.error();
+                    }))
+                    .append(msg.replaceText(TextReplacementConfig.builder()
+                            .match(VALUE_PATTERN)
+                            .replacement((r, b) -> {
+                                var group = r.group(1);
+                                var get = m.get(group);
+                                return get != null ? get : Component.text(group);
+                            })
+                            .build())));
+        };
     }
 
     private JsonObject parseFile(@NotNull File file) {
