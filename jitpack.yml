@@ -1,2 +1,6 @@
 jdk:
   - openjdk17
+skip-default-build: true
+build:
+  commands:
+    - ./gradlew :core:build
