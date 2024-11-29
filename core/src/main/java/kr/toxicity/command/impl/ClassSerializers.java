@@ -1,7 +1,10 @@
-package kr.toxicity.command;
+package kr.toxicity.command.impl;
 
 import java.util.List;
 
+/**
+ * Builtin class serializers
+ */
 final class ClassSerializers {
     private ClassSerializers() {
         throw new RuntimeException();

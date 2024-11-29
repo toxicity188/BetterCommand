@@ -2,7 +2,10 @@ package kr.toxicity.command.test;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import kr.toxicity.command.*;
-import kr.toxicity.command.annotation.*;
+import kr.toxicity.command.impl.BetterCommand;
+import kr.toxicity.command.impl.ClassSerializer;
+import kr.toxicity.command.impl.CommandMessage;
+import kr.toxicity.command.impl.annotation.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.commands.CommandSourceStack;

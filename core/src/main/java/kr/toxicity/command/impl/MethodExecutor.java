@@ -1,13 +1,17 @@
-package kr.toxicity.command;
+package kr.toxicity.command.impl;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import kr.toxicity.command.annotation.*;
-import kr.toxicity.command.exception.NotLastParameterException;
-import kr.toxicity.command.exception.NotSerializerRegisteredException;
+import kr.toxicity.command.BetterCommandSource;
+import kr.toxicity.command.CommandArgument;
+import kr.toxicity.command.CommandListener;
+import kr.toxicity.command.SenderType;
+import kr.toxicity.command.impl.annotation.*;
+import kr.toxicity.command.impl.exception.NotLastParameterException;
+import kr.toxicity.command.impl.exception.NotSerializerRegisteredException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -20,6 +24,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+/**
+ * A reflection class of executor
+ * @see CommandListener
+ * @param <W>
+ */
 class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W> {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TO_REFERENCE = Map.ofEntries(
@@ -44,6 +53,12 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
     private final String[] aliases;
     private List<UsageGetter<W>> usage = Collections.emptyList();
 
+    /**
+     * Initializes executor
+     * @param root main class
+     * @param obj parent class
+     * @param method target method
+     */
     MethodExecutor(@NotNull BetterCommand root, @NotNull CommandListener obj, @NotNull Method method) {
         try {
             method.setAccessible(true);
@@ -66,6 +81,7 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         this.obj = obj;
     }
 
+    @Override
     public @NotNull <S> List<LiteralArgumentBuilder<S>> build(@NotNull Function<S, W> mapper) {
         usage = new ArrayList<>();
         var typeAnnotation = method.getAnnotation(Sender.class);
@@ -219,13 +235,45 @@ class MethodExecutor<W extends BetterCommandSource> implements CommandArgument<W
         return nodes;
     }
 
+    /**
+     * Brigadier context parser
+     * @param <T> command source type
+     */
     private interface ContextParser<T> {
+        /**
+         * Gets whether this argument can be null
+         * @return whether this argument can be null
+         */
         boolean canBeNull();
+
+        /**
+         * Gets null argument message
+         * @param context target context
+         * @param value raw string
+         */
         void nullMessage(@NotNull CommandContext<T> context, @NotNull String value);
+
+        /**
+         * Gets a string key of this parser
+         * @param context target context
+         * @return string key
+         */
         @NotNull String key(@NotNull CommandContext<T> context);
+
+        /**
+         * Parses raw string to some object
+         * @param context target context
+         * @return parsed object
+         */
         @Nullable Object parse(@NotNull CommandContext<T> context);
     }
 
+    /**
+     * Gets a usage
+     * @param message usage message
+     * @param suggests suggest mapper
+     * @param <T> command source type
+     */
     private record UsageGetter<T>(@NotNull CommandMessage message, @NotNull Function<T, List<String>> suggests) {}
 
     @Override

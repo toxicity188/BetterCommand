@@ -1,16 +1,26 @@
-package kr.toxicity.command;
+package kr.toxicity.command.impl;
 
-import kr.toxicity.command.exception.KeyAlreadyExistException;
+import kr.toxicity.command.impl.exception.KeyAlreadyExistException;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
+/**
+ * Component with translatable key
+ * @param key translatable key
+ * @param defaultMessage default component if lang file is not found
+ */
 public record CommandMessage(@NotNull String key, @NotNull Component defaultMessage) implements Comparable<CommandMessage> {
 
     private static final Set<CommandMessage> ALL_MESSAGES = new TreeSet<>();
 
+    /**
+     * Creates instance.
+     * @param key translatable key
+     * @param defaultMessage default component if lang file is not found
+     */
     public CommandMessage(@NotNull String key, @NotNull Component defaultMessage) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(defaultMessage, "defaultMessage");
@@ -21,6 +31,10 @@ public record CommandMessage(@NotNull String key, @NotNull Component defaultMess
         if (!ALL_MESSAGES.add(this)) throw new KeyAlreadyExistException("This key is already generated: " + key);
     }
 
+    /**
+     * Gets all generated message
+     * @return all message
+     */
     @NotNull
     @Unmodifiable
     public static Set<CommandMessage> allMessages() {
