@@ -27,28 +27,6 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            pom {
-                name = "BetterCommand"
-                description = "A translatable command API that implements brigadier command node."
-                url = "https://github.com/toxicity188/BetterCommand"
-                licenses {
-                    license {
-                        name = "MIT license"
-                        url = "https://mit-license.org/"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "toxicity188"
-                        email = "angryko@naver.com"
-                    }
-                }
-                scm {
-                    connection = "scm:git:https://github.com/toxicity188/BetterCommand.git"
-                    developerConnection = "scm:git:ssh://git@github.com:toxicity188/BetterCommand.git"
-                    url = "https://github.com/toxicity188/BetterCommand"
-                }
-            }
             from(components["java"])
             artifact(sourcesJar)
             artifact(javadocJar)
