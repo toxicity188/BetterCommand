@@ -1,3 +1,5 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
@@ -20,12 +22,13 @@ dependencies {
 }
 
 mavenPublishing  {
-
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
-
     coordinates("io.github.toxicity188", rootProject.name, project.version as String)
-
+    configure(JavaLibrary(
+        javadocJar = JavadocJar.None(),
+        sourcesJar = true,
+    ))
     pom {
         name = rootProject.name
         description = "cross-platform command library implementing brigadier, adventure."
