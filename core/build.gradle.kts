@@ -1,22 +1,17 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
-    `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.30.0"
+    signing
 }
 
-tasks.jar {
-    archiveBaseName = rootProject.name
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
-val sourcesJar by tasks.creating(Jar::class.java) {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier = "sources"
-    archiveBaseName = rootProject.name
-}
-
-val javadocJar by tasks.creating(Jar::class.java) {
-    dependsOn(tasks.javadoc)
-    archiveClassifier = "javadoc"
-    from(tasks.javadoc)
-    archiveBaseName = rootProject.name
+signing {
+    useGpgCmd()
 }
 
 dependencies {
@@ -24,12 +19,35 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.17.0")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
+mavenPublishing  {
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates("io.github.toxicity188", rootProject.name, project.version as String)
+
+    pom {
+        name = rootProject.name
+        description = "cross-platform command library implementing brigadier, adventure."
+        inceptionYear = "2024"
+        url = "https://github.com/toxicity188/BetterCommand/"
+        licenses {
+            license {
+                name = "MIT License"
+                url = "https://mit-license.org/"
+            }
+        }
+        developers {
+            developer {
+                id = "toxicity188"
+                name = "toxicity188"
+                url = "https://github.com/toxicity188/"
+            }
+        }
+        scm {
+            url = "https://github.com/toxicity188/BetterCommand/"
+            connection = "scm:git:git://github.com/toxicity188/BetterCommand.git"
+            developerConnection = "scm:git:ssh://git@github.com/toxicity188/BetterCommand.git"
         }
     }
 }

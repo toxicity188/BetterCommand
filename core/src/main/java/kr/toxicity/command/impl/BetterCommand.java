@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -46,7 +47,10 @@ public final class BetterCommand {
     final MessageRegistry registry;
 
     @Getter
+    private Supplier<Boolean> silentLog = () -> false;
+    @Getter
     private volatile boolean onReload;
+
 
     /**
      * BetterCommand initializer
@@ -72,7 +76,17 @@ public final class BetterCommand {
 
         this.dataFolder = dataFolder;
         this.serializer = serializer;
-        this.logger = logger;
+        this.logger = new CommandLogger() {
+            @Override
+            public void info(@NotNull String... messages) {
+                if (!silentLog.get()) logger.info(messages);
+            }
+
+            @Override
+            public void warn(@NotNull String... messages) {
+                if (!silentLog.get()) logger.warn(messages);
+            }
+        };
         this.registry = new MessageRegistry(serializer);
 
         addSerializer(String.class, ClassSerializers.STRING);
@@ -97,6 +111,17 @@ public final class BetterCommand {
         Objects.requireNonNull(clazz, "clazz");
         Objects.requireNonNull(serializer, "serializer");
         serializerMap.put(clazz, serializer);
+        return this;
+    }
+
+
+    /**
+     * Sets whether to disable log
+     * @param silentLog checker
+     * @return self
+     */
+    public @NotNull BetterCommand silentLog(Supplier<Boolean> silentLog) {
+        this.silentLog = silentLog;
         return this;
     }
 
