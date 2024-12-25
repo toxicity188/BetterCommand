@@ -360,4 +360,37 @@ public final class BetterCommand {
     public @NotNull <W extends BetterCommandSource> CommandModule<W> module(@NotNull String name) {
         return new CommandModule<>(this, name);
     }
+
+    /**
+     * Gets prefix component.
+     * @param type prefix type
+     * @param source component source
+     * @return prefix component
+     */
+    public @NotNull Component prefix(@NotNull BetterCommandSource source, @NotNull PrefixType type) {
+        var get = switch (type) {
+            case INFO -> prefix.info();
+            case WARN -> prefix.warn();
+            case ERROR -> prefix.error();
+        };
+        return registry.find(source, get);
+    }
+
+    /**
+     * Prefix type.
+     */
+    public enum PrefixType {
+        /**
+         * Info
+         */
+        INFO,
+        /**
+         * Warn
+         */
+        WARN,
+        /**
+         * Error
+         */
+        ERROR
+    }
 }

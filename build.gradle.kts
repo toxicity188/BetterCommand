@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "java")
 
     group = "kr.toxicity.command"
-    version = "1.4.1"
+    version = "1.4.2"
 
     repositories {
         mavenCentral()
