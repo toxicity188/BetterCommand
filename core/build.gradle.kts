@@ -17,8 +17,8 @@ signing {
 }
 
 dependencies {
-    compileOnly("com.google.code.gson:gson:2.11.0")
-    compileOnly("net.kyori:adventure-api:4.17.0")
+    compileOnly("com.google.code.gson:gson:2.12.1")
+    compileOnly("net.kyori:adventure-api:4.18.0")
 }
 
 mavenPublishing  {

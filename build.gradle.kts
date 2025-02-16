@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "java")
 
     group = "kr.toxicity.command"
-    version = "1.4.2"
+    version = "1.4.3"
 
     repositories {
         mavenCentral()
@@ -14,11 +14,11 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok:1.18.34")
-        annotationProcessor("org.projectlombok:lombok:1.18.34")
+        compileOnly("org.projectlombok:lombok:1.18.36")
+        annotationProcessor("org.projectlombok:lombok:1.18.36")
 
-        testCompileOnly("org.projectlombok:lombok:1.18.34")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
+        testCompileOnly("org.projectlombok:lombok:1.18.36")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
         compileOnly("com.mojang:brigadier:1.3.10")
 
