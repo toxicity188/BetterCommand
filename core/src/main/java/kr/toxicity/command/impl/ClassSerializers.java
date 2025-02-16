@@ -1,6 +1,7 @@
 package kr.toxicity.command.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Builtin class serializers
@@ -15,27 +16,33 @@ final class ClassSerializers {
             .suggests(source -> List.of("string"))
             .build();
 
-    static final ClassSerializer<Integer> INTEGER = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Integer.parseInt(raw))
+    static final ClassSerializer<Integer> INTEGER = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Integer.parseInt(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("integer")
             .suggests(source -> List.of("0", "1", "2"))
             .build();
-    static final ClassSerializer<Double> DOUBLE = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Double.parseDouble(raw))
+    static final ClassSerializer<Double> DOUBLE = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Double.parseDouble(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("double")
             .suggests(source -> List.of("0.0", "1.0", "2.0"))
             .build();
-    static final ClassSerializer<Float> FLOAT = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Float.parseFloat(raw))
+    static final ClassSerializer<Float> FLOAT = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Float.parseFloat(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("float")
             .suggests(source -> List.of("0.0", "1.0", "2.0"))
             .build();
-    static final ClassSerializer<Long> LONG = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Long.parseLong(raw))
+    static final ClassSerializer<Long> LONG = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Long.parseLong(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("long")
             .suggests(source -> List.of("0", "1", "2"))
             .build();
-    static final ClassSerializer<Short> SHORT = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Short.parseShort(raw))
+    static final ClassSerializer<Short> SHORT = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Short.parseShort(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("short")
             .suggests(source -> List.of("0", "1", "2"))
             .build();
-    static final ClassSerializer<Byte> BYTE = ClassSerializer.builder((source, raw) -> raw.equals("null") ? null : Byte.parseByte(raw))
+    static final ClassSerializer<Byte> BYTE = ClassSerializer.builder((source, raw) ->
+                    raw.equals("null") ? null : Optional.of(raw).map(r -> { try { return Byte.parseByte(r); } catch(NumberFormatException e) { return null; } }).orElse(null))
             .name("byte")
             .suggests(source -> List.of("0", "1", "2"))
             .build();
